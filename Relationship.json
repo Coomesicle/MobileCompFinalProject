@@ -1,14 +1,14 @@
 [
-    {
-        "Tweet Type": "Relationship",
-        "Thing ID": "GarboSensor",
-        "Space ID": "Visionary Nexus Hub",
-        "Name": "",
-        "Owner": "",
-        "Category": "Cooperative",
-        "Type": "",
-        "Description": "",
-        "FS name": "",
-        "SS name": ""
-    }
+  {
+    "Tweet Type": "Relationship",
+    "Thing ID": "GarboSensor",
+    "Space ID": "Visionary Nexus Hub",
+    "Name": "Sensor to Actuator",
+    "Owner": "Coomes",
+    "Category": "Cooperative",
+    "Type": "control",
+    "Description": "",
+    "FS name": "getDistance",
+    "SS name": "distanceLength"
+  }
 ]

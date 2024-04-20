@@ -66,39 +66,48 @@ int main() {
     
 
 
-    while (listening) {
-        if (getBooleanFromAPI("http://127.0.0.1:5000/garbotron/status")) {
-            listening = false;
-            running = true;
+     while (true) {
+        // Continuously check the API
+        running = getBooleanFromAPI("http://127.0.0.1:5000/garbotron/status");
+
+        while (true) {  // Outer loop that should never exit
+        bool running = getBooleanFromAPI("http://127.0.0.1:5000/garbotron/status");
+        std::cout << "API Check, running status: " << running << std::endl;
+
+        while (running) {
+            // Actions to perform when the API returns true
+            garbotron.set_distance(measureDistance());
+            garbotron.update_trash();
+
+            std::cout << "Distance: " << garbotron.get_distance() << " cm" << std::endl;
+            std::cout << "Percent of trashcan filled: " << garbotron.get_trash_percent() << "%" << std::endl;
+
+            Json::Value depth;
+            depth["distance"] = std::to_string(garbotron.get_distance());
+            Json::StyledWriter writer;
+            std::string jsonData = writer.write(depth);
+
+            Json::Value percentJson;
+            percentJson["percent"] = std::to_string(garbotron.get_trash_percent());
+            Json::StyledWriter writerPercent;
+            std::string percentData = writerPercent.write(percentJson);
+
+            sendPutRequest("http://127.0.0.1:5000/garbotron/distance", jsonData);
+            sendPutRequest("http://127.0.0.1:5000/garbotron/percent", percentData);
+
+            std::this_thread::sleep_for(std::chrono::seconds(1)); // Measure every second
+
+            // Check the status again to decide whether to continue running
+            running = getBooleanFromAPI("http://127.0.0.1:5000/garbotron/status");
+            std::cout << "Rechecking API, running status: " << running << std::endl;
+
+            if (!running) {
+                std::cout << "Status changed to false, exiting inner loop." << std::endl;
+            }
         }
 
+        // Brief pause to prevent overwhelming the API with requests
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
-    while (running) {
-        //double distance = measureDistance();
-        garbotron.set_distance(measureDistance());
-        garbotron.update_trash();
-        std::cout << "Distance: " << garbotron.get_distance() << " cm" << std::endl;
-        std::cout << "Percent of trashcan filled: " << garbotron.get_trash_percent() << "%" << std::endl;
-        // 145-148 jsonifies depth of trashcan data
-        Json::Value depth;
-        depth["distance"] = std::to_string(garbotron.get_distance());
-        Json::StyledWriter writer; 
-    	std::string jsonData = writer.write(depth);
-        // 150-153 jsonifies percent of trash can filled
-        Json::Value percentJson;
-        percentJson["percent"] = std::to_string(garbotron.get_trash_percent());
-        Json::StyledWriter writerPercent;
-        std::string percentData = writerPercent.write(percentJson);
-        sendPutRequest("http://127.0.0.1:5000/garbotron/distance", jsonData);
-        sendPutRequest("http://127.0.0.1:5000/garbotron/percent", percentData);
-        std::this_thread::sleep_for(std::chrono::seconds(time)); // Measure every second
-        // Simulate distance data (replace with your actual distance sensor code)
-        std::string percent = std::to_string(garbotron.get_trash_percent());
-    }
-    
-
-    
-
-    gpioTerminate(); // Should ideally be called on program exit
-    return 0;
+}
 }

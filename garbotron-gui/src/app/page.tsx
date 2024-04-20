@@ -150,9 +150,11 @@ export function dashboard() {
         console.error("Error:", error)
       })
   }
+
   useEffect(() => {getAtlasRelationship()}, []);
   useEffect(() => {getAtlasThing()}, []);
   useEffect(() => {getAtlasServices()}, []);
+
 
   const [isOpen, setIsOpen] = useState(false);
   const openDialog = () => setIsOpen(true);

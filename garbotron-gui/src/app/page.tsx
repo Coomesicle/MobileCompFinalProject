@@ -80,13 +80,39 @@ export function dashboard() {
         console.error("Error:", error)
       })
   }
+
+  async function setStatus (status:boolean) {
+    await fetch("http://127.0.0.1:5000/garbotron/status", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({status: status}),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error)
+      })
+  }
   useEffect(() => {getAtlasTweet()}, []);
 
   const [isOpen, setIsOpen] = useState(false);
   const openDialog = () => setIsOpen(true);
   const closeDialog = () => setIsOpen(false);
 
-
+  const [service, setService] = useState("Start Service");
+  const changeService = () => {
+    if (service === "Start Service") {
+      setService("Stop Service");
+      setStatus(true);
+    } else {
+      setService("Start Service");
+      setStatus(false);
+    }
+  }
 
 
   return (
@@ -162,6 +188,9 @@ export function dashboard() {
           </div>
           <div className="flex items-center">
             <h1 className="font-semibold text-lg md:text-2xl">Services</h1>
+            <Button onClick={changeService} className="ml-auto" size="sm">
+              {service}
+            </Button>
           </div>
           <div className="border shadow-sm rounded-lg">
             <Table>
@@ -171,7 +200,6 @@ export function dashboard() {
                   <TableHead>Category</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead>Connections</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -181,9 +209,6 @@ export function dashboard() {
                     <TableCell>{Services[service].category}</TableCell>
                     <TableCell>{Services[service].type}</TableCell>
                     <TableCell>{Services[service].description}</TableCell>
-                    <TableCell>
-
-                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

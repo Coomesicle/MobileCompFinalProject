@@ -5,6 +5,7 @@ import os
 
 distance = {"distance" : 0}
 percent = {"percent" : 0}
+status = {"status" : False}
 app = Flask(__name__)
 
 CORS(app)
@@ -84,6 +85,20 @@ def get_percent():
     if request.method == "GET":
         return jsonify(percent)
     return jsonify({"error": "Invalid request"}), 400
+
+@app.route("/garbotron/status", methods=["PUT", "GET"])
+def service_status():
+    if request.method == "PUT":
+        new_data = request.get_json()
+        if "status" in new_data:
+            var = new_data['status']
+            status['status'] = var
+            return jsonify({"message": "Updated status"}), 200
+        return jsonify({"error": "Invalid data, use \"status\" as key"}), 400
+    if request.method == "GET":
+        return jsonify(status)
+    return jsonify({"error": "Invalid request"}), 400
+
     
 
 if __name__ == "__main__":

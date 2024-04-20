@@ -1,5 +1,36 @@
 'use client'
+/*
+[
+    {
+        "Tweet Type": "Service",
+        "Name": "Reads distance from ultrasonic sensor",
+        "Thing ID": "GarboSensor",
+        "Entity ID": "",
+        "Space ID": "Visionary Nexus Hub",
+        "Vendor": "",
+        "API": "Reads distance from ultrasonic sensor:[NULL]:(returns distance as an integer,int, NULL)",
+        "Type": "Report",
+        "AppCategory": "Environment Monitor",
+        "Description": "This service reads how full a trashcan is and returns a distance from the sensor to the top of the trash.",
+        "Keywords": "read trash distance,sensor"
+    },
+    {
+        "Tweet Type": "Service",
+        "Name": "Displays distance from sensor",
+        "Thing ID": "GarboDisplay",
+        "Entity ID": "lcd_rpi",
+        "Space ID": "Visionary Nexus Hub",
+        "Vendor": "",
+        "API": "Displays distance from sensor: [NULL]:Gets percent as int, int, NULL)",
+        "Type": "Condition",
+        "AppCategory": "Environment Monitor",
+        "Description": "Displays any reported information to a small lcd screen for visualization.",
+        "Keywords": "Displays to screen, Visual, Information"
+      }
+]
 
+
+*/
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -46,9 +77,8 @@ export function dashboard() {
     Relationships.push({name: name, type: type, description: description, firstService: firstService, secondService: secondService});
   }
 
-
-  async function getAtlasTweet() {
-    await fetch("http://127.0.0.1:5000/garbotron", {
+  async function getAtlasRelationship() {
+    await fetch("http://127.0.0.1:5000/atlas/getRelationship", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -56,25 +86,48 @@ export function dashboard() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
-        let thing = data.Atlas_IoTDDL.Atlas_Thing.Descriptive_Metadata;
-        let entity1 = data.Atlas_IoTDDL.Atlas_Entities.Entity_1;
-        let services1 = entity1.Services;
-        let relationships1 = entity1.Relationships;
-        addThing(thing.Thing_ATID, thing.Thing_Owner, thing.Thing_Name, thing.Thing_ShortDescription);
-        for (let service in services1) {
-          if (service !== "Number_Services") {
-            addService(services1[service].Name, services1[service].AppCategory, services1[service].Type, services1[service].Description);
-          }
-        }
-        for (let relationship in relationships1) {
-          if (relationship !== "Number_Relationships") {
-            addRelationship(relationships1[relationship].Name, relationships1[relationship].type, relationships1[relationship].Description, relationships1[relationship].Input1, relationships1[relationship].Input2);
-          }
-        }
-        setThings(Things);
-        setServices(Services);
+        let thing = data[0];
+        console.log(thing);
+        addRelationship(thing["Name"], thing["Type"], thing["Description"], thing["FS name"], thing["SS name"]);
         setRelationships(Relationships);
+      })
+      .catch((error) => {
+        console.error("Error:", error)
+      })
+  }
+  async function getAtlasThing() {
+    await fetch("http://127.0.0.1:5000/atlas/getIdentity_Thing", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        let thing = data[0];
+        let thing2 = data[1];
+        addThing(thing["Thing ID"], thing["Owner"], thing["Name"], thing["Description"]);
+        addThing(thing2["Thing ID"], thing2["Owner"], thing2["Name"], thing2["Description"]);
+        setThings(Things);
+      })
+      .catch((error) => {
+        console.error("Error:", error)
+      })
+  }
+  async function getAtlasServices() {
+    await fetch("http://127.0.0.1:5000/atlas/getService", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        let thing = data[0];
+        let thing2 = data[1];
+        addService(thing["Name"], thing["AppCategory"], thing["Type"], thing["Description"]);
+        addService(thing2["Name"], thing2["AppCategory"], thing2["Type"], thing2["Description"]);
+        setServices(Services);
       })
       .catch((error) => {
         console.error("Error:", error)
@@ -97,7 +150,11 @@ export function dashboard() {
         console.error("Error:", error)
       })
   }
-  useEffect(() => {getAtlasTweet()}, []);
+
+  useEffect(() => {getAtlasRelationship()}, []);
+  useEffect(() => {getAtlasThing()}, []);
+  useEffect(() => {getAtlasServices()}, []);
+
 
   const [isOpen, setIsOpen] = useState(false);
   const openDialog = () => setIsOpen(true);

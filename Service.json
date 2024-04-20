@@ -1,0 +1,31 @@
+[
+    {
+        "Tweet Type": "Service",
+        "Name": "Reads distance from ultrasonic sensor",
+        "Thing ID": "GarboSensor",
+        "Entity ID": "",
+        "Space ID": "Visionary Nexus Hub",
+        "Vendor": "",
+        "API": "Reads distance from ultrasonic sensor:[NULL]:(returns distance as an integer,int, NULL)",
+        "Type": "Report",
+        "AppCategory": "Environment Monitor",
+        "Description": "This service reads how full a trashcan is and returns a distance from the sensor to the top of the trash.",
+        "Keywords": "read trash distance,sensor"
+    },
+    {
+        "Tweet Type": "Service",
+        "Name": "Displays distance from sensor",
+        "Thing ID": "GarboDisplay",
+        "Entity ID": "lcd_rpi",
+        "Space ID": "Visionary Nexus Hub",
+        "Vendor": "",
+        "API": "Displays distance from sensor: [NULL]:Gets percent as int, int, NULL)",
+        "Type": "Condition",
+        "AppCategory": "Environment Monitor",
+        "Description": "Displays any reported information to a small lcd screen for visualization.",
+        "Keywords": "Displays to screen, Visual, Information"
+      }
+]
+
+
+  

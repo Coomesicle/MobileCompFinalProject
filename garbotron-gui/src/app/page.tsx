@@ -80,6 +80,23 @@ export function dashboard() {
         console.error("Error:", error)
       })
   }
+
+  async function setStatus (status:boolean) {
+    await fetch("http://127.0.0.1:5000/garbotron/status", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({status: status}),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error)
+      })
+  }
   useEffect(() => {getAtlasTweet()}, []);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -90,8 +107,10 @@ export function dashboard() {
   const changeService = () => {
     if (service === "Start Service") {
       setService("Stop Service");
+      setStatus(true);
     } else {
       setService("Start Service");
+      setStatus(false);
     }
   }
 

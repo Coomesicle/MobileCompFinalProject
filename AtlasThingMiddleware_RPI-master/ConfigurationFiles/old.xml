@@ -1,0 +1,225 @@
+<Atlas_IoTDDL>
+	<Atlas_Thing>
+		<Descriptive_Metadata>
+			<Thing_ATID>group15-garbotron</Thing_ATID>
+			<Thing_Name>Garbo Tron</Thing_Name>
+			<Thing_Owner>Coomes</Thing_Owner>
+			<Thing_Vendor>Coomes Industries</Thing_Vendor>
+			<Thing_Model>Garbo-Tron-v0</Thing_Model>
+			<Thing_ReleaseDate>04/2024</Thing_ReleaseDate>
+			<Thing_Type>Thing of Things</Thing_Type>
+			<Thing_OperatingSystem>Raspbian</Thing_OperatingSystem>
+			<Thing_ShortDescription>Our thing utilizes the ultrasonic ranging module connected to our Raspberry Pi. This device allows us to provide stable distance readings with high accuracy. We can detect distances between 2 cm and 450 cm with a precision of up to 3mm. It also utilizes an i2c LCD 1602 screen to display the results.</Thing_ShortDescription>
+			<LongDescription></LongDescription>
+			<Thing_SSID>Visionary Nexus Hub</Thing_SSID>
+			<Space_Coordinates>(29.6465, -82.3533)</Space_Coordinates>
+			<Space_Name>Kitchen</Space_Name>
+			<Space_Description>Visionary Nexus Hub: the beginnings of humanity's foray into the next world. We aim to connect facets of human life to our technologically advanced counterparts, starting at the humble trash can, intertwining the mundane reality with our exciting future.</Space_Description>
+			<Space_Constraints>
+				<Temperature>
+					<Lower_Bound>32F</Lower_Bound>
+					<Upper_Bound>80F</Upper_Bound>
+				</Temperature>
+				<Humidity>
+					<Lower_Bound>0%</Lower_Bound>
+					<Upper_Bound>80%</Upper_Bound>
+				</Humidity>
+				<Voltage>
+					<Lower_Bound>4.75V</Lower_Bound>
+					<Upper_Bound>5.25V</Upper_Bound>
+				</Voltage>
+				<Radio_Interference_Radius></Radio_Interference_Radius>
+				<Safe_Temperature_Radius></Safe_Temperature_Radius>
+			</Space_Constraints>
+		</Descriptive_Metadata>
+		<Administrative_Metadata>
+			<Network_Manager>
+				<Module>WiFi</Module>
+				<Type>Built-In</Type>
+				<Network_Name>patricknetwork</Network_Name>
+				<Network_Passcode>mobilecomp</Network_Passcode>
+				<MulticastGroup>
+					<IP>192.168.137.1</IP>
+					<Port>8080</Port>
+				</MulticastGroup>
+				<Communication_Protocol>Sockets</Communication_Protocol>
+				<InterOperableCommunication>
+					<Broker>
+						<Vendor>Eduroam</Vendor>
+						<Dashboard>https://www.ufl.edu/</Dashboard>
+						<IP>10.136.6.100</IP>
+						<Port></Port>
+					</Broker>
+					<Topic>
+						<Root>/Atlas</Root>
+						<Network_MQTTClient>/Network/MQTT_Client</Network_MQTTClient>
+						<Network_PrivateBroker>/Network/Private_Broker</Network_PrivateBroker>
+						<Multicast_ThingIdentity>/Multicast/Tweet_ThingIdentity</Multicast_ThingIdentity>
+						<Multicast_EntityIdentity>/Multicast/Tweet_EntityIdentity</Multicast_EntityIdentity>
+						<Multicast_API>/Multicast/API</Multicast_API>
+						<Unicast>/Unicast/Interaction</Unicast>
+					</Topic>
+				</InterOperableCommunication>
+				<OMA_DM>
+					<AccessName></AccessName>
+					<IP></IP>
+					<Port></Port>
+				</OMA_DM>
+			</Network_Manager>
+			<Memory_Manager>
+				<Store_Format></Store_Format>
+				<MemoryUnit_Application></MemoryUnit_Application>
+				<MemoryUnit_Knowledge></MemoryUnit_Knowledge>
+			</Memory_Manager>
+		</Administrative_Metadata>
+		<Thing_Attachment>
+
+		</Thing_Attachment>
+		<Structural_Metadata>
+			<Number_Hardware>2</Number_Hardware>
+			<Number_Software>0</Number_Software>
+			<Number_Hybrid>0</Number_Hybrid>
+			<Number_Entities>2</Number_Entities>
+		</Structural_Metadata>
+	</Atlas_Thing>
+	<Atlas_Entities>
+		<Entity_1>
+			<Descriptive_Metadata>
+				<ID>sensor</ID>
+				<Name>GarboTron Sensor</Name>
+				<Owner>Coomes</Owner>
+				<Vendor>Coomes Industries</Vendor>
+				<Category>Hardware</Category>
+				<Type>Connected</Type>
+				<Description>One part of the Garbo Tron device,  provides stable distance readings with high accuracy. </Description>
+			</Descriptive_Metadata>
+			<Services>
+				<Service_1>
+					<Name>getDistance</Name>
+					<AppCategory>Cleaning</AppCategory>
+					<Type>Report</Type>
+					<Keywords></Keywords>
+					<Description>Detects the distance of the actuator from the sensor, to tell how full a garbage can is.</Description>
+					<Contextual_Constraints>
+						<Time_Window>5seconds</Time_Window>
+						<Usage_Mode>Single</Usage_Mode>
+						<Concurrent>Yes</Concurrent>
+					</Contextual_Constraints>
+					<Temporal_Constraints>
+						<Working>
+							<StartTime></StartTime>
+							<EndTime></EndTime>
+						</Working>
+						<Callable>
+							<StartTime></StartTime>
+							<EndTime></EndTime>
+						</Callable>
+					</Temporal_Constraints>
+					<OutputDescription>Distance</OutputDescription>
+					<OutputType>int</OutputType>
+					<Service_Formula><![CDATA[
+
+]]></Service_Formula>
+					<Service_NumberInputs>0</Service_NumberInputs>
+					<Service_InputTypes></Service_InputTypes>
+					<Service_InputDescriptions></Service_InputDescriptions>
+				</Service_1>
+				<Service_2>
+					<Name>distanceLength</Name>
+					<AppCategory>Cleaning</AppCategory>
+					<Type>Report</Type>
+					<Keywords></Keywords>
+					<Description>Returns the distance of the sensor in CM</Description>
+					<Contextual_Constraints>
+						<Time_Window></Time_Window>
+						<Usage_Mode></Usage_Mode>
+						<Concurrent></Concurrent>
+					</Contextual_Constraints>
+					<Temporal_Constraints>
+						<Working>
+							<StartTime></StartTime>
+							<EndTime></EndTime>
+						</Working>
+						<Callable>
+							<StartTime></StartTime>
+							<EndTime></EndTime>
+						</Callable>
+					</Temporal_Constraints>
+					<OutputDescription></OutputDescription>
+					<OutputType>void</OutputType>
+					<Service_Formula><![CDATA[
+
+]]></Service_Formula>
+					<Service_NumberInputs>0</Service_NumberInputs>
+					<Service_InputTypes></Service_InputTypes>
+					<Service_InputDescriptions></Service_InputDescriptions>
+				</Service_2>
+				<Service_3>
+					<Name></Name>
+					<AppCategory></AppCategory>
+					<Type></Type>
+					<Keywords></Keywords>
+					<Description></Description>
+					<Contextual_Constraints>
+						<Time_Window>30seconds</Time_Window>
+						<Usage_Mode></Usage_Mode>
+						<Concurrent></Concurrent>
+					</Contextual_Constraints>
+					<Temporal_Constraints>
+						<Working>
+							<StartTime>6am</StartTime>
+							<EndTime>10pm</EndTime>
+						</Working>
+						<Callable>
+							<StartTime>6:30am</StartTime>
+							<EndTime>9:30pm</EndTime>
+						</Callable>
+					</Temporal_Constraints>
+					<OutputDescription></OutputDescription>
+					<OutputType>void</OutputType>
+					<Service_Formula><![CDATA[
+
+]]></Service_Formula>
+					<Service_NumberInputs>0</Service_NumberInputs>
+					<Service_InputTypes></Service_InputTypes>
+					<Service_InputDescriptions></Service_InputDescriptions>
+				</Service_3>
+				<Number_Services>3</Number_Services>
+			</Services>
+			<Relationships>
+				<Relationship_1>
+					<Name>Sensor to Actuator</Name>
+					<Establisher>TCP</Establisher>
+					<Description></Description>
+					<type>control</type>
+					<Input1>getDistance</Input1>
+					<Input2>distanceLength</Input2>
+				</Relationship_1>
+				<Number_Relationships>1</Number_Relationships>
+			</Relationships>
+			<UnboundedService>
+				<Number_UnboundedServices>0</Number_UnboundedServices>
+			</UnboundedService>
+		</Entity_1>
+		<Entity_2>
+			<Descriptive_Metadata>
+				<ID>actuator</ID>
+				<Name>GarboTron Actuator</Name>
+				<Owner>Coomes</Owner>
+				<Vendor>Coomes Industries</Vendor>
+				<Category>Hardware</Category>
+				<Type>Remote</Type>
+				<Description>We can detect distances between 2 cm and 450 cm with a precision of up to 3mm.</Description>
+			</Descriptive_Metadata>
+			<Services>
+				<Number_Services>0</Number_Services>
+			</Services>
+			<UnboundedService>
+				<Number_UnboundedServices>0</Number_UnboundedServices>
+			</UnboundedService>
+			<Relationships>
+				<Number_Relationships>0</Number_Relationships>
+			</Relationships>
+		</Entity_2>
+	</Atlas_Entities>
+</Atlas_IoTDDL>

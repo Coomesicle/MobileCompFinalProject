@@ -1,0 +1,24 @@
+[
+    {
+        "Tweet Type": "Identity_Thing",
+        "Thing ID": "GarboDisplay",
+        "Space ID": "Visionary Nexus Hub",
+        "Name": "LCD",
+        "Model": "SunFounder IIC I2C TWI 1602 Serial LCD Module",
+        "Vendor": "",
+        "Owner": "Rama",
+        "Description": "A simple lcd screen display",
+        "OS": "Raspbian"
+    },
+    {
+        "Tweet Type": "Identity_Thing",
+        "Thing ID": "GarboSensor",
+        "Space ID": "Visionary Nexus Hub",
+        "Name": "Sensor",
+        "Model": "Raspberry Pi 4B",
+        "Vendor": "Patrick",
+        "Owner": "Patrick",
+        "Description": "Sensor for Garbotron",
+        "OS": "Raspbian"
+    }
+]

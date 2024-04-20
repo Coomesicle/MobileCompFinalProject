@@ -1,0 +1,24 @@
+[
+    {
+        "Tweet Type": "Identity_Entity",
+        "Thing ID": "GarboDisplay",
+        "Space ID": "Visionary Nexus Hub",
+        "Name": "actuator",
+        "ID": "lcd_rpi",
+        "Type": "Connected",
+        "Owner": "Rama",
+        "Vendor": "",
+        "Description": "lcd display from sunfounder"
+    },
+    {
+        "Tweet Type": "Identity_Entity",
+        "Thing ID": "GarboSensor",
+        "Space ID": "Visionary Nexus Hub",
+        "Name": "",
+        "ID": "",
+        "Type": "",
+        "Owner": "",
+        "Vendor": "",
+        "Description": ""
+    }
+]

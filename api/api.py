@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
+import os
 
 distance = {"distance" : 0}
 percent = {"percent" : 0}
@@ -8,12 +9,51 @@ app = Flask(__name__)
 
 CORS(app)
 
+def load_json_data(file_name):
+    file_path = os.path.join(os.path.dirname(__file__), '..', file_name)
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    return data
+
+# Route for Identity_Entity
+@app.route("/atlas/getIdentity_Entity", methods=["GET"])
+def get_identity_entity():
+    data = load_json_data('Identity_Entity.json')
+    return jsonify(data)
+
+# Route for Identity_Language
+@app.route("/atlas/getIdentity_Language", methods=["GET"])
+def get_identity_language():
+    data = load_json_data('Identity_Language.json')
+    return jsonify(data)
+
+# Route for Identity_Thing
+@app.route("/atlas/getIdentity_Thing", methods=["GET"])
+def get_identity_thing():
+    data = load_json_data('Identity_Thing.json')
+    return jsonify(data)
+
+# Route for Relationship
+@app.route("/atlas/getRelationship", methods=["GET"])
+def get_relationship():
+    data = load_json_data('Relationship.json')
+    return jsonify(data)
+
+# Route for Service
+@app.route("/atlas/getService", methods=["GET"])
+def get_service():
+    data = load_json_data('Service.json')
+    return jsonify(data)
+
+
+
 # GET /garbotron
 @app.route("/garbotron", methods=["GET"])
 def get_garbotron():
     with open('garbotron.json', 'r') as file:
         garbotron_data = json.load(file)
     return jsonify(garbotron_data)
+
 
 
 # GET, PUT /garbotron/distance

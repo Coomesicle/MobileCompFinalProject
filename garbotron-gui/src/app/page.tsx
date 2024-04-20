@@ -86,7 +86,14 @@ export function dashboard() {
   const openDialog = () => setIsOpen(true);
   const closeDialog = () => setIsOpen(false);
 
-
+  const [service, setService] = useState("Start Service");
+  const changeService = () => {
+    if (service === "Start Service") {
+      setService("Stop Service");
+    } else {
+      setService("Start Service");
+    }
+  }
 
 
   return (
@@ -162,6 +169,9 @@ export function dashboard() {
           </div>
           <div className="flex items-center">
             <h1 className="font-semibold text-lg md:text-2xl">Services</h1>
+            <Button onClick={changeService} className="ml-auto" size="sm">
+              {service}
+            </Button>
           </div>
           <div className="border shadow-sm rounded-lg">
             <Table>
@@ -171,7 +181,6 @@ export function dashboard() {
                   <TableHead>Category</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead>Connections</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -181,9 +190,6 @@ export function dashboard() {
                     <TableCell>{Services[service].category}</TableCell>
                     <TableCell>{Services[service].type}</TableCell>
                     <TableCell>{Services[service].description}</TableCell>
-                    <TableCell>
-
-                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

@@ -89,12 +89,34 @@ bool getBooleanFromAPI(const std::string& url) {
     return result;
 }
 
-// int main() {
-//     std::string apiURL = "http://127.0.0.1:5000/garbotron/status";  // Replace with your actual URL
-//     if (getBooleanFromAPI(apiURL)) {
-//         std::cout << "Boolean from API is true." << std::endl;
-//     } else {
-//         std::cout << "Boolean from API is false." << std::endl;
-//     }
-//     return 0;
-// }
+// Function to perform a GET request and parse the JSON response
+Json::Value getPercent(const std::string& url) {
+    CURL *curl;
+    CURLcode res;
+    std::string readBuffer;
+    Json::Value jsonData;
+
+    curl = curl_easy_init();
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK) {
+            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+        } else {
+            Json::Reader jsonReader;
+            if (jsonReader.parse(readBuffer, jsonData)) {
+                std::cout << "Successfully parsed JSON data" << std::endl;
+                std::cout << "Received data: " << jsonData.toStyledString() << std::endl;
+            } else {
+                std::cerr << "Failed to parse JSON" << std::endl;
+            }
+        }
+        curl_easy_cleanup(curl);
+    }
+    return jsonData;
+}
+

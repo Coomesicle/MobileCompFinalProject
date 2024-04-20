@@ -2,7 +2,7 @@
 
 ### Group Name: Visionary Nexus Hub
 Visionary Nexus Hub: the beginnings of humanity's foray into the next world. We aim to connect facets of human life to our technologically advanced counterparts, starting at the humble trash can, intertwining the mundane reality with our exciting future.
-### Group Members: Rama Janco, Devin DuBois, Stephen Coomes, Patrick Nguyen
+### Group Members: Rama Janco, Stephen Coomes, Patrick Nguyen
 
 ## Description
 GARBOTRON measures how full your garbage can is and sends it to a web dashboard and an LCD screen!

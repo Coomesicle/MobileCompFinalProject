@@ -1,0 +1,20 @@
+[
+    {
+        "Tweet Type": "Identity_Language",
+        "Thing ID": "GarboDisplay",
+        "Space ID": "Visionary Nexus Hub",
+        "Network Name": "patricknetwork",
+        "Communication Language": "Sockets",
+        "IP": "0.0.0.0",
+        "Port": "6668"
+    },
+    {
+        "Tweet Type": "Identity_Language",
+        "Thing ID": "GarboSensor",
+        "Space ID": "Visionary Nexus Hub",
+        "Network Name": "patricknetwork",
+        "Communication Language": "Sockets",
+        "IP": "0.0.0.0",
+        "Port": "6668"
+    }
+]

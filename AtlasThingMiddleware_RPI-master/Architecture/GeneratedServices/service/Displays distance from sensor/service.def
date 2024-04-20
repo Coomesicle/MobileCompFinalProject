@@ -1,0 +1,5 @@
+autogen definitions service;
+name = Displays distance from sensor;
+source = " ";
+inputs = { name = "Gets percent as int"; type = "int"; };
+output = { type = void; };

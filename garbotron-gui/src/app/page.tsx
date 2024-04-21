@@ -144,10 +144,12 @@ export function dashboard() {
         console.error("Error:", error)
       })
   }
+
   useEffect(() => {getAtlasRelationship()}, []);
   useEffect(() => {getAtlasThing()}, []);
   useEffect(() => {getAtlasServices()}, []);
   useEffect(() => {getAtlasApps()}, []);
+
 
   const [isOpen, setIsOpen] = useState(false);
 

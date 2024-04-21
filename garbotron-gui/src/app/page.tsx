@@ -299,6 +299,7 @@ export function dashboard() {
             <AppDialog open={isOpen} setOpen={setIsOpen}/>
           </div>
           <div className="border shadow-sm rounded-lg">
+          {Object.keys(atlasApps).length > 0 &&(
             <Table>
               <TableHeader>
                 <TableRow>
@@ -329,6 +330,7 @@ export function dashboard() {
                 ))}
               </TableBody>
             </Table>
+          )}
           </div>
         </main>
       </div>

@@ -129,6 +129,24 @@ export function dashboard() {
       })
   }
 
+  async function deleteAtlasApp(name:string) {
+    await fetch("http://127.0.0.1:5000/atlas/updateApp", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({name: name}),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+      })
+      .catch((error) => {
+        console.error("Error:", error)
+      })
+  }
+      
+
+
   async function setStatus (status:boolean) {
     await fetch("http://127.0.0.1:5000/garbotron/status", {
       method: "PUT",

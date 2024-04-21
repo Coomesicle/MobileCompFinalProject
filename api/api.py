@@ -60,7 +60,7 @@ def get_service():
     return jsonify(data)
 
 
-@app.route("/atlas/updateApp", methods=["GET", "POST"])
+@app.route("/atlas/updateApp", methods=["GET", "POST", "DELETE"])
 def update_atlasapp():
     if request.method == "POST":
         new_data = request.get_json()
@@ -70,6 +70,16 @@ def update_atlasapp():
             relationships = new_data['relationships']
             add_atlasapp(name, services, relationships)
             return jsonify({"message": "Updated app"}), 200
+        return jsonify({"error": "Invalid data, use \"app\" as key"}), 400
+    if request.method == "DELETE":
+        new_data = request.get_json()
+        if "appName" in new_data:
+            name = new_data['appName']
+            for app in atlasApps:
+                if app['name'] == name:
+                    atlasApps.remove(app)
+                    return jsonify({"message": "Deleted app"}), 200
+            return jsonify({"error": "App not found"}), 400
         return jsonify({"error": "Invalid data, use \"app\" as key"}), 400
     if request.method == "GET":
         return jsonify(atlasApps)

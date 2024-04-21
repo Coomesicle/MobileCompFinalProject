@@ -6,15 +6,28 @@ import os
 distance = {"distance" : 0}
 percent = {"percent" : 0}
 status = {"status" : False}
-app = Flask(__name__)
+atlasApps = []
 
-CORS(app)
+def add_atlasapp(name, services, relationships):
+    new_app = {
+        "name": name,
+        "services": services,
+        "relationships": relationships
+    }
+    atlasApps.append(new_app)
+
+
+
 
 def load_json_data(file_name):
     file_path = os.path.join(os.path.dirname(__file__), '..', file_name)
     with open(file_path, 'r') as file:
         data = json.load(file)
     return data
+
+
+app = Flask(__name__)
+CORS(app)
 
 # Route for Identity_Entity
 @app.route("/atlas/getIdentity_Entity", methods=["GET"])
@@ -45,6 +58,22 @@ def get_relationship():
 def get_service():
     data = load_json_data('Service.json')
     return jsonify(data)
+
+
+@app.route("/atlas/updateApp", methods=["GET", "POST"])
+def update_atlasapp():
+    if request.method == "POST":
+        new_data = request.get_json()
+        if "appName" in new_data:
+            name = new_data['appName']
+            services = new_data['services']
+            relationships = new_data['relationships']
+            add_atlasapp(name, services, relationships)
+            return jsonify({"message": "Updated app"}), 200
+        return jsonify({"error": "Invalid data, use \"app\" as key"}), 400
+    if request.method == "GET":
+        return jsonify(atlasApps)
+    return jsonify({"error": "Invalid request"}), 400
 
 
 

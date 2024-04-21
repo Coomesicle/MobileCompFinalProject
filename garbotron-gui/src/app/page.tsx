@@ -1,51 +1,23 @@
 'use client'
-/*
-[
-    {
-        "Tweet Type": "Service",
-        "Name": "Reads distance from ultrasonic sensor",
-        "Thing ID": "GarboSensor",
-        "Entity ID": "",
-        "Space ID": "Visionary Nexus Hub",
-        "Vendor": "",
-        "API": "Reads distance from ultrasonic sensor:[NULL]:(returns distance as an integer,int, NULL)",
-        "Type": "Report",
-        "AppCategory": "Environment Monitor",
-        "Description": "This service reads how full a trashcan is and returns a distance from the sensor to the top of the trash.",
-        "Keywords": "read trash distance,sensor"
-    },
-    {
-        "Tweet Type": "Service",
-        "Name": "Displays distance from sensor",
-        "Thing ID": "GarboDisplay",
-        "Entity ID": "lcd_rpi",
-        "Space ID": "Visionary Nexus Hub",
-        "Vendor": "",
-        "API": "Displays distance from sensor: [NULL]:Gets percent as int, int, NULL)",
-        "Type": "Condition",
-        "AppCategory": "Environment Monitor",
-        "Description": "Displays any reported information to a small lcd screen for visualization.",
-        "Keywords": "Displays to screen, Visual, Information"
-      }
-]
-
-
-*/
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
 import { useEffect, useState } from "react"
+import  AppDialog  from "@/components/component/appDialog"
 
 let Things = [];
 let Services = [];
 let Relationships = [];
+let atlasApps = [];
 
 export function dashboard() {
   const [things, setThings] = useState([]);
   const [services, setServices] = useState([]);
   const [relationships, setRelationships] = useState([]);
+  const [atlasapps, setatlasApps] = useState([]);
+  
 
   function addThing(id:string, owner:string, name:string, description:string) {
     if (id === "" || owner === "" || name === "" || description === "") {
@@ -56,7 +28,6 @@ export function dashboard() {
     }
 
     Things.push({id: id, owner: owner, name: name, description: description});
-    console.log(Things);
   }
   function addService(name:string, category:string, type:string, description:string) {
     if (name === "" || category === "" || type === "" || description === "") {
@@ -76,6 +47,15 @@ export function dashboard() {
     }
     Relationships.push({name: name, type: type, description: description, firstService: firstService, secondService: secondService});
   }
+  function addApp(name:string, services:string, relationships:string) {
+    if (name === "" || services === "" || relationships === "") {
+      return;
+    }
+    if (atlasApps.some(app => app.name === name)) {
+      return;
+    }
+    atlasApps.push({name: name, services: services, relationships: relationships});
+  }
 
   async function getAtlasRelationship() {
     await fetch("http://127.0.0.1:5000/atlas/getRelationship", {
@@ -87,7 +67,6 @@ export function dashboard() {
       .then((response) => response.json())
       .then((data) => {
         let thing = data[0];
-        console.log(thing);
         addRelationship(thing["Name"], thing["Type"], thing["Description"], thing["FS name"], thing["SS name"]);
         setRelationships(Relationships);
       })
@@ -133,6 +112,22 @@ export function dashboard() {
         console.error("Error:", error)
       })
   }
+  async function getAtlasApps() {
+    await fetch("http://127.0.0.1:5000/atlas/updateApp", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        let thing = data[data.length - 1];
+        addApp(thing["name"], thing["services"], thing["relationships"]);
+      })
+      .catch((error) => {
+        console.error("Error:", error)
+      })
+  }
 
   async function setStatus (status:boolean) {
     await fetch("http://127.0.0.1:5000/garbotron/status", {
@@ -144,7 +139,6 @@ export function dashboard() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
       })
       .catch((error) => {
         console.error("Error:", error)
@@ -154,11 +148,10 @@ export function dashboard() {
   useEffect(() => {getAtlasRelationship()}, []);
   useEffect(() => {getAtlasThing()}, []);
   useEffect(() => {getAtlasServices()}, []);
+  useEffect(() => {getAtlasApps()}, []);
 
 
   const [isOpen, setIsOpen] = useState(false);
-  const openDialog = () => setIsOpen(true);
-  const closeDialog = () => setIsOpen(false);
 
   const [service, setService] = useState("Start Service");
   const changeService = () => {
@@ -300,9 +293,42 @@ export function dashboard() {
           </div>
           <div className="flex items-center">
             <h1 className="font-semibold text-lg md:text-2xl">Apps</h1>
-            <Button onClick={openDialog}className="ml-auto" size="sm">
+            <Button onClick={() => setIsOpen(true)}className="ml-auto" size="sm">
               Upload app
             </Button>
+            <AppDialog open={isOpen} setOpen={setIsOpen}/>
+          </div>
+          <div className="border shadow-sm rounded-lg">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Options</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {Object.keys(atlasApps).map((app) => (
+                  <TableRow key={app}>
+                    <TableCell>{atlasApps[app].name}</TableCell>
+                    <TableCell>
+                      <Button size="sm">SAVE APP</Button>
+                    </TableCell>
+                    <TableCell>
+                      <Button size="sm">UPLOAD APP</Button>
+                    </TableCell>
+                    <TableCell>
+                      <Button size="sm">ACTIVATE</Button>
+                    </TableCell>
+                    <TableCell>
+                      <Button size="sm">STOP</Button>
+                    </TableCell>
+                    <TableCell>
+                      <Button size="sm">DELETE</Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </main>
       </div>

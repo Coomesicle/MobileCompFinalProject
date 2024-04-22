@@ -9,7 +9,9 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <thread>
 #include <sstream>
+#include "../garbotron_sensor/apis.cpp"
 
 // Global vars for LCD 
 int LCDAddr = 0x27; // I2C addr
@@ -127,76 +129,115 @@ int main() {
     delay(3000);
     clear();
 
+    
 
 
-    // Create a socket file descriptor for network communication setup 
-    int server_fd = socket(AF_INET, SOCK_STREAM, 0); // create a socket for IPv4 and TCP
-    if (server_fd == -1) {
-        std::cerr << "Failed to create socket" << std::endl;
-        return 1; //exit if failed 
-    }
 
-    // Set up the server address
-    sockaddr_in server_addr;
-    server_addr.sin_family = AF_INET; // IPv4 
-    server_addr.sin_addr.s_addr = INADDR_ANY; // listen on any networks interface 
-    server_addr.sin_port = htons(8080); // sets server port 
+    // // Create a socket file descriptor for network communication setup 
+    // int server_fd = socket(AF_INET, SOCK_STREAM, 0); // create a socket for IPv4 and TCP
+    // if (server_fd == -1) {
+    //     std::cerr << "Failed to create socket" << std::endl;
+    //     return 1; //exit if failed 
+    // }
 
-    // Bind the socket to the server address
-    if (bind(server_fd, (sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
-        std::cerr << "Failed to bind socket" << std::endl;
-        return 1;
-    }
+    // // Set up the server address
+    // sockaddr_in server_addr;
+    // server_addr.sin_family = AF_INET; // IPv4 
+    // server_addr.sin_addr.s_addr = INADDR_ANY; // listen on any networks interface 
+    // server_addr.sin_port = htons(8080); // sets server port 
 
-    // Listen for incoming connections, max of 5 connectiosn 
-    if (listen(server_fd, 5) == -1) {
-        std::cerr << "Failed to listen on socket" << std::endl;
-        return 1;
-    }
+    // // Bind the socket to the server address
+    // if (bind(server_fd, (sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
+    //     std::cerr << "Failed to bind socket" << std::endl;
+    //     return 1;
+    // }
 
-    // Display the IP address of the connected client
-    std::cout << "Server listening on port 8080" << std::endl;
+    // // Listen for incoming connections, max of 5 connectiosn 
+    // if (listen(server_fd, 5) == -1) {
+    //     std::cerr << "Failed to listen on socket" << std::endl;
+    //     return 1;
+    // }
 
-    // Accept a new connection
-    sockaddr_in client_addr;
-    socklen_t client_len = sizeof(client_addr);
-    int client_fd = accept(server_fd, (sockaddr*)&client_addr, &client_len);
-    if (client_fd == -1) {
-        std::cerr << "Failed to accept connection" << std::endl;
-        return 1;
-    }
+    // // Display the IP address of the connected client
+    // std::cout << "Server listening on port 8080" << std::endl;
 
-    std::cout << "Accepted connection from " << inet_ntoa(client_addr.sin_addr) << std::endl;
+    // // Accept a new connection
+    // sockaddr_in client_addr;
+    // socklen_t client_len = sizeof(client_addr);
+    // int client_fd = accept(server_fd, (sockaddr*)&client_addr, &client_len);
+    // if (client_fd == -1) {
+    //     std::cerr << "Failed to accept connection" << std::endl;
+    //     return 1;
+    // }
+
+    // std::cout << "Accepted connection from " << inet_ntoa(client_addr.sin_addr) << std::endl;
 
 
-    while (true) { // runs until force terminated
-        // Receive the distance data
-        char buffer[1024]; // buffer for recieving data 
-        memset(buffer, 0, sizeof(buffer)); //clear buffer 
-        ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0); // recieve data from client 
-        if (bytes_received == -1) {
-            std::cerr << "Failed to receive data" << std::endl;
-            break;
-        } else {
-            // convert received data to a string, then to a double, and display it on the LCD
+    // while (true) { // runs until force terminated
+    //     // Receive the distance data
+    //     char buffer[1024]; // buffer for recieving data 
+    //     memset(buffer, 0, sizeof(buffer)); //clear buffer 
+    //     ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0); // recieve data from client 
+    //     if (bytes_received == -1) {
+    //         std::cerr << "Failed to receive data" << std::endl;
+    //         break;
+    //     } else {
+    //         // convert received data to a string, then to a double, and display it on the LCD
 
-            std::string distanceString(buffer, bytes_received);
-            std::istringstream iss(distanceString);
-            double distance;
-            iss >> distance;
-            if (iss.fail()) {
-                std::cerr << "Error converting received data to double" << std::endl;
-            } else {
+    //         std::string distanceString(buffer, bytes_received);
+    //         std::istringstream iss(distanceString);
+    //         double distance;
+    //         iss >> distance;
+    //         if (iss.fail()) {
+    //             std::cerr << "Error converting received data to double" << std::endl;
+    //         } else {
+    //             std::cout << "Received distance: " << distance << std::endl; // print distance
+    //             writeDistance(1, 1, distance); //write to lcd
+    //         }
+    //     }
+    // }
+    bool running = false;
+    std::string api = "https://b764-128-227-14-9.ngrok-free.app/garbotron/status";
+    std::string getAPI = "https://b764-128-227-14-9.ngrok-free.app/garbotron/percent";
+
+
+    while (true) {
+            // Continuously check the API
+            running = getBooleanFromAPI(api);
+
+            while (true) {  // Outer loop that should never exit
+            bool running = getBooleanFromAPI(api);
+            std::cout << "API Check, running status: " << running << std::endl;
+
+            while (running) {
+                // Actions to perform when the API returns true
+
+                double distance = getPercent(getAPI);
+
                 std::cout << "Received distance: " << distance << std::endl; // print distance
                 writeDistance(1, 1, distance); //write to lcd
+
+                // Check the status again to decide whether to continue running
+                running = getBooleanFromAPI(api);
+                std::cout << "Rechecking API, running status: " << running << std::endl;
+
+                if (!running) {
+                    std::cout << "Status changed to false, exiting inner loop." << std::endl;
+                }
+                
+                std::this_thread::sleep_for(std::chrono::seconds(3));
+
             }
+            clear();
+            // Brief pause to prevent overwhelming the API with requests
+            std::this_thread::sleep_for(std::chrono::seconds(3));
         }
     }
 
-    // Close the server socket
-    close(server_fd);
+        // Close the server socket
+        
+        return 0;
+        }
 
-    return 0;
-}
 
 

@@ -225,12 +225,12 @@ int main() {
                     std::cout << "Status changed to false, exiting inner loop." << std::endl;
                 }
                 
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::this_thread::sleep_for(std::chrono::seconds(3));
 
             }
             clear();
             // Brief pause to prevent overwhelming the API with requests
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(3));
         }
     }
 

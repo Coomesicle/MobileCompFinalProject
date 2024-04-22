@@ -96,7 +96,7 @@ int main() {
             sendPutRequest(apiPUTDist, jsonData);
             sendPutRequest(apiPUTPercent, percentData);
 
-            std::this_thread::sleep_for(std::chrono::seconds(1)); // Measure every second
+            std::this_thread::sleep_for(std::chrono::seconds(3)); // Measure every second
 
             // Check the status again to decide whether to continue running
             running = getBooleanFromAPI(apiRunning);
@@ -108,7 +108,7 @@ int main() {
         }
 
         // Brief pause to prevent overwhelming the API with requests
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(3));
     }
 }
 }

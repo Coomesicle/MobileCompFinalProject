@@ -6,15 +6,29 @@ import os
 distance = {"distance" : 0}
 percent = {"percent" : 0}
 status = {"status" : False}
-app = Flask(__name__)
+garbotronData = {"maxDistance" : 100, "refreshRate" : 5}
+atlasApps = []
 
-CORS(app)
+def add_atlasapp(name, services, relationships):
+    new_app = {
+        "name": name,
+        "services": services,
+        "relationships": relationships
+    }
+    atlasApps.append(new_app)
+
+
+
 
 def load_json_data(file_name):
     file_path = os.path.join(os.path.dirname(__file__), '..', file_name)
     with open(file_path, 'r') as file:
         data = json.load(file)
     return data
+
+
+app = Flask(__name__)
+CORS(app)
 
 # Route for Identity_Entity
 @app.route("/atlas/getIdentity_Entity", methods=["GET"])
@@ -47,6 +61,32 @@ def get_service():
     return jsonify(data)
 
 
+@app.route("/atlas/updateApp", methods=["GET", "POST", "DELETE"])
+def update_atlasapp():
+    if request.method == "POST":
+        new_data = request.get_json()
+        if "appName" in new_data:
+            name = new_data['appName']
+            services = new_data['services']
+            relationships = new_data['relationships']
+            add_atlasapp(name, services, relationships)
+            return jsonify({"message": "Updated app"}), 200
+        return jsonify({"error": "Invalid data, use \"app\" as key"}), 400
+    if request.method == "DELETE":
+        new_data = request.get_json()
+        if "appName" in new_data:
+            name = new_data['appName']
+            for app in atlasApps:
+                if app['name'] == name:
+                    atlasApps.remove(app)
+                    return jsonify({"message": "Deleted app"}), 200
+            return jsonify({"error": "App not found"}), 401
+        return jsonify({"error": "Invalid data, use \"app\" as key"}), 402
+    if request.method == "GET":
+        return jsonify(atlasApps)
+    return jsonify({"error": "Invalid request"}), 400
+
+
 
 # GET /garbotron
 @app.route("/garbotron", methods=["GET"])
@@ -69,6 +109,19 @@ def get_distance():
         return jsonify({"error": "Invalid data, use \"distance\" as key"}), 400
     if request.method == "GET":
         return jsonify(distance)
+    return jsonify({"error": "Invalid request"}), 400
+
+@app.route("/garbotron/data", methods=["GET", "POST"])
+def get_max_distance():
+    if request.method == "POST":
+        new_data = request.get_json()
+        if "maxDistance" in new_data and "refreshRate" in new_data:
+            garbotronData['maxDistance'] = new_data['maxDistance']
+            garbotronData['refreshRate'] = new_data['refreshRate']
+            return jsonify({"message": "Updated maxDistance"}), 200
+        return jsonify({"error": "Invalid data, use \"maxDistance\" and \"refreshRate\" as keys"}), 400
+    if request.method == "GET":
+        return jsonify(garbotronData)
     return jsonify({"error": "Invalid request"}), 400
 
 

@@ -63,15 +63,16 @@ int main() {
     int length = garbotron.get_distance();
     int time = 5;
     setup();
-    
-
+    std::string apiRunning = "https://a3b9-128-227-14-9.ngrok-free.app/garbotron/status";
+    std::string apiPUTDist = "https://a3b9-128-227-14-9.ngrok-free.app/garbotron/distance";
+    std::string apiPUTPercent = "https://a3b9-128-227-14-9.ngrok-free.app/garbotron/percent";
 
      while (true) {
         // Continuously check the API
-        running = getBooleanFromAPI("http://127.0.0.1:5000/garbotron/status");
+        running = getBooleanFromAPI(apiRunning);
 
         while (true) {  // Outer loop that should never exit
-        bool running = getBooleanFromAPI("http://127.0.0.1:5000/garbotron/status");
+        bool running = getBooleanFromAPI(apiRunning);
         std::cout << "API Check, running status: " << running << std::endl;
 
         while (running) {
@@ -92,13 +93,13 @@ int main() {
             Json::StyledWriter writerPercent;
             std::string percentData = writerPercent.write(percentJson);
 
-            sendPutRequest("http://127.0.0.1:5000/garbotron/distance", jsonData);
-            sendPutRequest("http://127.0.0.1:5000/garbotron/percent", percentData);
+            sendPutRequest(apiPUTDist, jsonData);
+            sendPutRequest(apiPUTPercent, percentData);
 
             std::this_thread::sleep_for(std::chrono::seconds(1)); // Measure every second
 
             // Check the status again to decide whether to continue running
-            running = getBooleanFromAPI("http://127.0.0.1:5000/garbotron/status");
+            running = getBooleanFromAPI(apiRunning);
             std::cout << "Rechecking API, running status: " << running << std::endl;
 
             if (!running) {

@@ -197,7 +197,8 @@ int main() {
     //     }
     // }
     bool running = false;
-    std::string api = "http://127.0.0.1:5000/garbotron/status";
+    std::string api = "https://a3b9-128-227-14-9.ngrok-free.app/garbotron/status";
+
 
     while (true) {
             // Continuously check the API

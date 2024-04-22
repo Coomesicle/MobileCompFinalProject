@@ -198,6 +198,7 @@ int main() {
     // }
     bool running = false;
     std::string api = "https://a3b9-128-227-14-9.ngrok-free.app/garbotron/status";
+    std::string getAPI = "https://a3b9-128-227-14-9.ngrok-free.app/garbotron/percent";
 
 
     while (true) {
@@ -211,10 +212,8 @@ int main() {
             while (running) {
                 // Actions to perform when the API returns true
 
-                Json::Value percentJson;
-                percentJson = getPercent;
+                double distance = getPercent(getAPI);
 
-                double distance = percentJson.asDouble();
                 std::cout << "Received distance: " << distance << std::endl; // print distance
                 writeDistance(1, 1, distance); //write to lcd
 
@@ -229,7 +228,7 @@ int main() {
                 std::this_thread::sleep_for(std::chrono::seconds(1));
 
             }
-
+            clear();
             // Brief pause to prevent overwhelming the API with requests
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }

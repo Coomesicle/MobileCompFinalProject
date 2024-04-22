@@ -90,11 +90,12 @@ bool getBooleanFromAPI(const std::string& url) {
 }
 
 // Function to perform a GET request and parse the JSON response
-Json::Value getPercent(const std::string& url) {
+double getPercent(const std::string& url) {
     CURL *curl;
     CURLcode res;
     std::string readBuffer;
     Json::Value jsonData;
+    double percent = 0.0;  // Default percent value
 
     curl = curl_easy_init();
     if (curl) {
@@ -111,12 +112,25 @@ Json::Value getPercent(const std::string& url) {
             if (jsonReader.parse(readBuffer, jsonData)) {
                 std::cout << "Successfully parsed JSON data" << std::endl;
                 std::cout << "Received data: " << jsonData.toStyledString() << std::endl;
+                
+                if (jsonData.isMember("percent")) {
+                    if (jsonData["percent"].isString()) {
+                        try {
+                            percent = std::stod(jsonData["percent"].asString());
+                        } catch (const std::invalid_argument& e) {
+                            std::cerr << "Invalid argument: could not convert string to double" << std::endl;
+                        } catch (const std::out_of_range& e) {
+                            std::cerr << "Out of range: string to double conversion error" << std::endl;
+                        }
+                    } else if (jsonData["percent"].isNumeric()) {
+                        percent = jsonData["percent"].asDouble();
+                    }
+                }
             } else {
                 std::cerr << "Failed to parse JSON" << std::endl;
             }
         }
         curl_easy_cleanup(curl);
     }
-    return jsonData;
+    return percent;  // Return the percent value, whether modified or default
 }
-

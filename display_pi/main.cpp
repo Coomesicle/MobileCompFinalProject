@@ -129,6 +129,8 @@ int main() {
     delay(3000);
     clear();
 
+    
+
 
 
     // // Create a socket file descriptor for network communication setup 
@@ -195,13 +197,14 @@ int main() {
     //     }
     // }
     bool running = false;
+    std::string api = "http://127.0.0.1:5000/garbotron/status";
 
     while (true) {
             // Continuously check the API
-            running = getBooleanFromAPI("http://127.0.0.1:5000/garbotron/status");
+            running = getBooleanFromAPI(api);
 
             while (true) {  // Outer loop that should never exit
-            bool running = getBooleanFromAPI("http://127.0.0.1:5000/garbotron/status");
+            bool running = getBooleanFromAPI(api);
             std::cout << "API Check, running status: " << running << std::endl;
 
             while (running) {
@@ -215,7 +218,7 @@ int main() {
                 writeDistance(1, 1, distance); //write to lcd
 
                 // Check the status again to decide whether to continue running
-                running = getBooleanFromAPI("http://127.0.0.1:5000/garbotron/status");
+                running = getBooleanFromAPI(api);
                 std::cout << "Rechecking API, running status: " << running << std::endl;
 
                 if (!running) {

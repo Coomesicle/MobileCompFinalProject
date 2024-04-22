@@ -1,60 +1,110 @@
-'use client'
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
-import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
-import { useEffect, useState } from "react"
-import  AppDialog  from "@/components/component/appDialog"
+"use client";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenu,
+} from "@/components/ui/dropdown-menu";
+import {
+  TableHead,
+  TableRow,
+  TableHeader,
+  TableCell,
+  TableBody,
+  Table,
+} from "@/components/ui/table";
+import { useEffect, useState } from "react";
+import AppDialog from "@/components/component/appDialog";
+import ServiceDialog from "@/components/component/serviceDialog";
+import { tree } from "next/dist/build/templates/app-page";
+import { stat } from "fs";
 
-let Things = [];
-let Services = [];
-let Relationships = [];
-let atlasApps = [];
+var Things: any[] = [];
+var Services: any[] = [];
+var Relationships: any[] = [];
+var atlasApps: any[] = [];
 
 export function dashboard() {
   const [things, setThings] = useState([]);
   const [services, setServices] = useState([]);
   const [relationships, setRelationships] = useState([]);
   const [atlasapps, setatlasApps] = useState([]);
-  
+  const [activate, setActivate] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [serviceDialog, setServiceDialog] = useState(false);
 
-  function addThing(id:string, owner:string, name:string, description:string) {
+  function addThing(
+    id: string,
+    owner: string,
+    name: string,
+    description: string
+  ) {
     if (id === "" || owner === "" || name === "" || description === "") {
       return;
     }
-    if (Things.some(thing => thing.id === id)) {
+    if (Things.some((thing) => thing.id === id)) {
       return;
     }
 
-    Things.push({id: id, owner: owner, name: name, description: description});
+    Things.push({ id: id, owner: owner, name: name, description: description });
   }
-  function addService(name:string, category:string, type:string, description:string) {
+  function addService(
+    name: string,
+    category: string,
+    type: string,
+    description: string
+  ) {
     if (name === "" || category === "" || type === "" || description === "") {
       return;
     }
-    if(Services.some(service => service.name === name)) {
+    if (Services.some((service) => service.name === name)) {
       return;
     }
-    Services.push({name: name, category: category, type: type, description: description});
+    Services.push({
+      name: name,
+      category: category,
+      type: type,
+      description: description,
+    });
   }
-  function addRelationship(name:string, type:string, description:string, firstService:string, secondService:string) {
+  function addRelationship(
+    name: string,
+    type: string,
+    description: string,
+    firstService: string,
+    secondService: string
+  ) {
     if (name === "" || firstService === "" || secondService === "") {
       return;
     }
-    if (Relationships.some(relationship => relationship.name === name)) {
+    if (Relationships.some((relationship) => relationship.name === name)) {
       return;
     }
-    Relationships.push({name: name, type: type, description: description, firstService: firstService, secondService: secondService});
+    Relationships.push({
+      name: name,
+      type: type,
+      description: description,
+      firstService: firstService,
+      secondService: secondService,
+    });
   }
-  function addApp(name:string, services:string, relationships:string) {
+  function addApp(name: string, services: string, relationships: string) {
     if (name === "" || services === "" || relationships === "") {
       return;
     }
-    if (atlasApps.some(app => app.name === name)) {
+    if (atlasApps.some((app) => app.name === name)) {
       return;
     }
-    atlasApps.push({name: name, services: services, relationships: relationships});
+    atlasApps.push({
+      name: name,
+      services: services,
+      relationships: relationships,
+    });
   }
 
   async function getAtlasRelationship() {
@@ -67,12 +117,18 @@ export function dashboard() {
       .then((response) => response.json())
       .then((data) => {
         let thing = data[0];
-        addRelationship(thing["Name"], thing["Type"], thing["Description"], thing["FS name"], thing["SS name"]);
+        addRelationship(
+          thing["Name"],
+          thing["Type"],
+          thing["Description"],
+          thing["FS name"],
+          thing["SS name"]
+        );
         setRelationships(Relationships);
       })
       .catch((error) => {
-        console.error("Error:", error)
-      })
+        console.error("Error:", error);
+      });
   }
   async function getAtlasThing() {
     await fetch("http://127.0.0.1:5000/atlas/getIdentity_Thing", {
@@ -85,13 +141,23 @@ export function dashboard() {
       .then((data) => {
         let thing = data[0];
         let thing2 = data[1];
-        addThing(thing["Thing ID"], thing["Owner"], thing["Name"], thing["Description"]);
-        addThing(thing2["Thing ID"], thing2["Owner"], thing2["Name"], thing2["Description"]);
+        addThing(
+          thing["Thing ID"],
+          thing["Owner"],
+          thing["Name"],
+          thing["Description"]
+        );
+        addThing(
+          thing2["Thing ID"],
+          thing2["Owner"],
+          thing2["Name"],
+          thing2["Description"]
+        );
         setThings(Things);
       })
       .catch((error) => {
-        console.error("Error:", error)
-      })
+        console.error("Error:", error);
+      });
   }
   async function getAtlasServices() {
     await fetch("http://127.0.0.1:5000/atlas/getService", {
@@ -104,13 +170,23 @@ export function dashboard() {
       .then((data) => {
         let thing = data[0];
         let thing2 = data[1];
-        addService(thing["Name"], thing["AppCategory"], thing["Type"], thing["Description"]);
-        addService(thing2["Name"], thing2["AppCategory"], thing2["Type"], thing2["Description"]);
+        addService(
+          thing["Name"],
+          thing["AppCategory"],
+          thing["Type"],
+          thing["Description"]
+        );
+        addService(
+          thing2["Name"],
+          thing2["AppCategory"],
+          thing2["Type"],
+          thing2["Description"]
+        );
         setServices(Services);
       })
       .catch((error) => {
-        console.error("Error:", error)
-      })
+        console.error("Error:", error);
+      });
   }
   async function getAtlasApps() {
     await fetch("http://127.0.0.1:5000/atlas/updateApp", {
@@ -125,33 +201,65 @@ export function dashboard() {
         addApp(thing["name"], thing["services"], thing["relationships"]);
       })
       .catch((error) => {
-        console.error("Error:", error)
-      })
+        console.error("Error:", error);
+      });
   }
 
-  async function setStatus (status:boolean) {
+  async function deleteAtlasApp() {
+    let name = atlasApps[atlasApps.length - 1].name;
+    await fetch("http://127.0.0.1:5000/atlas/updateApp", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ appName: name }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        atlasApps = atlasApps.filter((app) => app.name !== name);
+        setatlasApps(atlasApps);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+  useEffect(() => {
+    getAtlasApps();
+  }, []);
+  useEffect(() => {
+    getAtlasRelationship();
+  }, []);
+  useEffect(() => {
+    getAtlasThing();
+  }, []);
+  useEffect(() => {
+    getAtlasServices();
+  }, []);
+
+  async function setStatus(status: boolean) {
     await fetch("http://127.0.0.1:5000/garbotron/status", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({status: status}),
+      body: JSON.stringify({ status: status }),
     })
       .then((response) => response.json())
-      .then((data) => {
-      })
+      .then((data) => {})
       .catch((error) => {
-        console.error("Error:", error)
-      })
+        console.error("Error:", error);
+      });
   }
 
-  useEffect(() => {getAtlasRelationship()}, []);
-  useEffect(() => {getAtlasThing()}, []);
-  useEffect(() => {getAtlasServices()}, []);
-  useEffect(() => {getAtlasApps()}, []);
-
-
-  const [isOpen, setIsOpen] = useState(false);
+  const openService = () => {
+    // Call both functions when the button is clicked
+    changeService();
+    if (service === "Start Service") {
+      setServiceDialog(true);
+    } else {
+      setServiceDialog(false);
+    }
+  };
 
   const [service, setService] = useState("Start Service");
   const changeService = () => {
@@ -162,8 +270,7 @@ export function dashboard() {
       setService("Start Service");
       setStatus(false);
     }
-  }
-
+  };
 
   return (
     <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
@@ -238,9 +345,10 @@ export function dashboard() {
           </div>
           <div className="flex items-center">
             <h1 className="font-semibold text-lg md:text-2xl">Services</h1>
-            <Button onClick={changeService} className="ml-auto" size="sm">
+            <Button onClick={openService} className="ml-auto" size="sm">
               {service}
             </Button>
+            <ServiceDialog open={serviceDialog} setOpen={setServiceDialog} />
           </div>
           <div className="border shadow-sm rounded-lg">
             <Table>
@@ -283,9 +391,15 @@ export function dashboard() {
                   <TableRow key={relationship}>
                     <TableCell>{Relationships[relationship].name}</TableCell>
                     <TableCell>{Relationships[relationship].type}</TableCell>
-                    <TableCell>{Relationships[relationship].description}</TableCell>
-                    <TableCell>{Relationships[relationship].firstService}</TableCell>
-                    <TableCell>{Relationships[relationship].secondService}</TableCell>
+                    <TableCell>
+                      {Relationships[relationship].description}
+                    </TableCell>
+                    <TableCell>
+                      {Relationships[relationship].firstService}
+                    </TableCell>
+                    <TableCell>
+                      {Relationships[relationship].secondService}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -293,53 +407,70 @@ export function dashboard() {
           </div>
           <div className="flex items-center">
             <h1 className="font-semibold text-lg md:text-2xl">Apps</h1>
-            <Button onClick={() => setIsOpen(true)}className="ml-auto" size="sm">
+            <Button
+              onClick={() => setIsOpen(true)}
+              className="ml-auto"
+              size="sm"
+            >
               Upload app
             </Button>
-            <AppDialog open={isOpen} setOpen={setIsOpen}/>
+            <AppDialog open={isOpen} setOpen={setIsOpen} />
           </div>
           <div className="border shadow-sm rounded-lg">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Options</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {Object.keys(atlasApps).map((app) => (
-                  <TableRow key={app}>
-                    <TableCell>{atlasApps[app].name}</TableCell>
-                    <TableCell>
-                      <Button size="sm">SAVE APP</Button>
-                    </TableCell>
-                    <TableCell>
-                      <Button size="sm">UPLOAD APP</Button>
-                    </TableCell>
-                    <TableCell>
-                      <Button size="sm">ACTIVATE</Button>
-                    </TableCell>
-                    <TableCell>
-                      <Button size="sm">STOP</Button>
-                    </TableCell>
-                    <TableCell>
-                      <Button size="sm">DELETE</Button>
-                    </TableCell>
+            {Object.keys(atlasApps).length > 0 && (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Options</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {Object.keys(atlasApps).map((app) => (
+                    <TableRow key={app}>
+                      <TableCell>{atlasApps[app].name}</TableCell>
+                      <TableCell>
+                        <Button size="sm">SAVE APP</Button>
+                      </TableCell>
+                      <TableCell>
+                        <Button size="sm">UPLOAD APP</Button>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          disabled={activate}
+                          onClick={() => setActivate(true)}
+                        >
+                          ACTIVATE
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          disabled={!activate}
+                          onClick={() => setActivate(false)}
+                        >
+                          STOP
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Button onClick={() => deleteAtlasApp()} size="sm">
+                          DELETE
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </div>
         </main>
       </div>
     </div>
-  )
+  );
 }
 
-
-
-
-function MoreHorizontalIcon(props) {
+function MoreHorizontalIcon(props: any) {
   return (
     <svg
       {...props}
@@ -357,11 +488,10 @@ function MoreHorizontalIcon(props) {
       <circle cx="19" cy="12" r="1" />
       <circle cx="5" cy="12" r="1" />
     </svg>
-  )
+  );
 }
 
-
-function CoomesIcon(props) {
+function CoomesIcon(props: any) {
   return (
     <svg
       {...props}
@@ -375,17 +505,12 @@ function CoomesIcon(props) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M4.97 18H13v-1.5a2.5 2.5 0 0 0-2.5-2.5h-1a.5.5 0 0 1 0-1h1a3.5 3.5 0 0 1 3.5 3.5V18h.25c.472 0 .9-.191 1.21-.5h.04v-.041a1.7 1.7 0 0 0 .465-1.175v-7.61c1.61-.064 2.573-1.85 1.713-3.238l-.502-.81a2.12 2.12 0 0 0-1.802-1.004h-1.435v-.636A.986.986 0 0 0 12.953 2a2.445 2.445 0 0 0-2.444 2.446v3.456c-1.278.126-2.243.73-2.952 1.582c-.44.528-.779 1.148-1.04 1.798c-.227.46-.386.959-.464 1.485l-.013.059c-.276 1.182-.373 2.358-.403 3.232c-.012.374-.012.696-.008.942H4.97a1.971 1.971 0 0 1-1.44-3.317l.92-.987a3.59 3.59 0 0 0-.086-4.984l-.903-.903a.5.5 0 1 0-.707.707l.903.903a2.587 2.587 0 0 1 .062 3.595l-.92.987A2.973 2.973 0 0 0 4.97 18"/>
+      <path d="M4.97 18H13v-1.5a2.5 2.5 0 0 0-2.5-2.5h-1a.5.5 0 0 1 0-1h1a3.5 3.5 0 0 1 3.5 3.5V18h.25c.472 0 .9-.191 1.21-.5h.04v-.041a1.7 1.7 0 0 0 .465-1.175v-7.61c1.61-.064 2.573-1.85 1.713-3.238l-.502-.81a2.12 2.12 0 0 0-1.802-1.004h-1.435v-.636A.986.986 0 0 0 12.953 2a2.445 2.445 0 0 0-2.444 2.446v3.456c-1.278.126-2.243.73-2.952 1.582c-.44.528-.779 1.148-1.04 1.798c-.227.46-.386.959-.464 1.485l-.013.059c-.276 1.182-.373 2.358-.403 3.232c-.012.374-.012.696-.008.942H4.97a1.971 1.971 0 0 1-1.44-3.317l.92-.987a3.59 3.59 0 0 0-.086-4.984l-.903-.903a.5.5 0 1 0-.707.707l.903.903a2.587 2.587 0 0 1 .062 3.595l-.92.987A2.973 2.973 0 0 0 4.97 18" />
     </svg>
-  )
-
-
+  );
 }
 
-
-
-
-function UsersIcon(props) {
+function UsersIcon(props: any) {
   return (
     <svg
       {...props}
@@ -404,11 +529,7 @@ function UsersIcon(props) {
       <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
       <path d="M16 3.13a4 4 0 0 1 0 7.75" />
     </svg>
-  )
+  );
 }
 
-export default dashboard
-
-
-
-
+export default dashboard;

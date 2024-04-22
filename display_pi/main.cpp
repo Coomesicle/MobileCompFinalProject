@@ -197,8 +197,8 @@ int main() {
     //     }
     // }
     bool running = false;
-    std::string api = "https://a3b9-128-227-14-9.ngrok-free.app/garbotron/status";
-    std::string getAPI = "https://a3b9-128-227-14-9.ngrok-free.app/garbotron/percent";
+    std::string api = "https://b764-128-227-14-9.ngrok-free.app/garbotron/status";
+    std::string getAPI = "https://b764-128-227-14-9.ngrok-free.app/garbotron/percent";
 
 
     while (true) {

@@ -63,9 +63,9 @@ int main() {
     int length = garbotron.get_distance();
     int time = 5;
     setup();
-    std::string apiRunning = "https://a3b9-128-227-14-9.ngrok-free.app/garbotron/status";
-    std::string apiPUTDist = "https://a3b9-128-227-14-9.ngrok-free.app/garbotron/distance";
-    std::string apiPUTPercent = "https://a3b9-128-227-14-9.ngrok-free.app/garbotron/percent";
+    std::string apiRunning = "https://b764-128-227-14-9.ngrok-free.app/garbotron/status";
+    std::string apiPUTDist = "https://b764-128-227-14-9.ngrok-free.app/garbotron/distance";
+    std::string apiPUTPercent = "https://b764-128-227-14-9.ngrok-free.app/garbotron/percent";
 
      while (true) {
         // Continuously check the API
